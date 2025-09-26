@@ -1,0 +1,107 @@
+[
+  {
+    "Id": 1,
+    "name": "Push-ups",
+    "muscleGroups": ["Chest", "Shoulders", "Arms"],
+    "instructions": "Start in plank position with hands shoulder-width apart. Lower body until chest nearly touches ground, then push back up. Keep core engaged throughout movement.",
+    "equipment": ["Bodyweight"]
+  },
+  {
+    "Id": 2,
+    "name": "Pull-ups",
+    "muscleGroups": ["Back", "Arms"],
+    "instructions": "Hang from bar with palms facing away. Pull body up until chin clears bar, then lower with control. Focus on squeezing shoulder blades together.",
+    "equipment": ["Pull-up Bar"]
+  },
+  {
+    "Id": 3,
+    "name": "Bench Press",
+    "muscleGroups": ["Chest", "Shoulders", "Arms"],
+    "instructions": "Lie on bench with feet flat on floor. Grip bar slightly wider than shoulders. Lower bar to chest, then press up explosively.",
+    "equipment": ["Barbell", "Bench"]
+  },
+  {
+    "Id": 4,
+    "name": "Shoulder Press",
+    "muscleGroups": ["Shoulders", "Arms"],
+    "instructions": "Stand with dumbbells at shoulder height. Press weights overhead until arms are fully extended. Lower with control.",
+    "equipment": ["Dumbbells"]
+  },
+  {
+    "Id": 5,
+    "name": "Bent-over Row",
+    "muscleGroups": ["Back", "Arms"],
+    "instructions": "Hinge at hips with knees slightly bent. Pull bar to lower chest while squeezing shoulder blades. Lower with control.",
+    "equipment": ["Barbell"]
+  },
+  {
+    "Id": 6,
+    "name": "Squats",
+    "muscleGroups": ["Legs", "Core"],
+    "instructions": "Stand with feet shoulder-width apart. Lower body as if sitting back into chair. Keep chest up and knees tracking over toes.",
+    "equipment": ["Bodyweight", "Barbell"]
+  },
+  {
+    "Id": 7,
+    "name": "Deadlifts",
+    "muscleGroups": ["Legs", "Back", "Core"],
+    "instructions": "Stand with bar over mid-foot. Hinge at hips and knees to grip bar. Drive through heels to stand up straight.",
+    "equipment": ["Barbell"]
+  },
+  {
+    "Id": 8,
+    "name": "Lunges",
+    "muscleGroups": ["Legs", "Core"],
+    "instructions": "Step forward into lunge position. Lower back knee toward ground while keeping front knee over ankle. Push back to start.",
+    "equipment": ["Bodyweight", "Dumbbells"]
+  },
+  {
+    "Id": 9,
+    "name": "Hip Thrusts",
+    "muscleGroups": ["Legs"],
+    "instructions": "Lie with shoulder blades against bench, feet flat on floor. Drive hips up while squeezing glutes at the top.",
+    "equipment": ["Bench", "Barbell"]
+  },
+  {
+    "Id": 10,
+    "name": "Calf Raises",
+    "muscleGroups": ["Legs"],
+    "instructions": "Stand on balls of feet on platform. Raise up onto toes as high as possible, then lower slowly.",
+    "equipment": ["Platform", "Dumbbells"]
+  },
+  {
+    "Id": 11,
+    "name": "Burpees",
+    "muscleGroups": ["Core", "Legs", "Chest"],
+    "instructions": "Drop into squat, kick feet back to plank, do push-up, jump feet forward, then jump up with arms overhead.",
+    "equipment": ["Bodyweight"]
+  },
+  {
+    "Id": 12,
+    "name": "Mountain Climbers",
+    "muscleGroups": ["Core", "Legs"],
+    "instructions": "Start in plank position. Alternate bringing knees toward chest in rapid succession while maintaining plank form.",
+    "equipment": ["Bodyweight"]
+  },
+  {
+    "Id": 13,
+    "name": "Plank",
+    "muscleGroups": ["Core"],
+    "instructions": "Hold plank position with forearms on ground and body in straight line. Keep core tight and avoid sagging hips.",
+    "equipment": ["Bodyweight"]
+  },
+  {
+    "Id": 14,
+    "name": "Russian Twists",
+    "muscleGroups": ["Core"],
+    "instructions": "Sit with knees bent and feet lifted. Lean back slightly and rotate torso side to side while holding weight.",
+    "equipment": ["Medicine Ball", "Dumbbell"]
+  },
+  {
+    "Id": 15,
+    "name": "Bicycle Crunches",
+    "muscleGroups": ["Core"],
+    "instructions": "Lie on back with hands behind head. Bring opposite elbow to knee while extending other leg. Alternate sides continuously.",
+    "equipment": ["Bodyweight"]
+  }
+]

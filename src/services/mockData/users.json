@@ -1,0 +1,9 @@
+[
+  {
+    "Id": 1,
+    "name": "Alex Johnson",
+    "fitnessLevel": "Intermediate",
+    "goals": ["Build muscle", "Increase strength", "Improve endurance"],
+    "joinDate": "2024-01-15"
+  }
+]
