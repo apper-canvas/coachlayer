@@ -2,7 +2,12 @@ import { NavLink } from "react-router-dom"
 import { cn } from "@/utils/cn"
 import ApperIcon from "@/components/ApperIcon"
 
-const TabNavigation = ({ tabs, className, ...props }) => {
+const TabNavigation = ({ tabs = [
+  { path: "/", icon: "Dumbbell", label: "Workouts" },
+  { path: "/exercise-library", icon: "Library", label: "Library" },
+  { path: "/progress", icon: "TrendingUp", label: "Progress" },
+  { path: "/profile", icon: "User", label: "Profile" }
+], className, ...props }) => {
   return (
     <nav className={cn("flex justify-around items-center bg-surface border-t border-gray-200 px-2 py-1", className)} {...props}>
       {tabs.map((tab) => (
