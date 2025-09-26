@@ -1,57 +1,219 @@
-import workoutSessionsData from "@/services/mockData/workoutSessions.json"
+import { toast } from "react-toastify"
 
 class WorkoutSessionService {
   constructor() {
-    this.sessions = [...workoutSessionsData]
+    this.tableName = "workout_session_c"
+    this.apperClient = null
+    this.initializeClient()
+  }
+
+  initializeClient() {
+    if (typeof window !== "undefined" && window.ApperSDK) {
+      const { ApperClient } = window.ApperSDK
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      })
+    }
   }
 
   async getAll() {
-    await this.delay()
-    return [...this.sessions]
+    try {
+      if (!this.apperClient) this.initializeClient()
+      
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "plan_id_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "duration_c"}},
+          {"field": {"Name": "completed_c"}},
+          {"field": {"Name": "exercises_data_c"}},
+          {"field": {"Name": "user_id_c"}}
+        ]
+      }
+
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return []
+      }
+
+      return response.data || []
+    } catch (error) {
+      console.error("Error fetching workout sessions:", error?.response?.data?.message || error)
+      toast.error("Failed to load workout sessions")
+      return []
+    }
   }
 
   async getById(id) {
-    await this.delay()
-    const session = this.sessions.find(s => s.Id === id)
-    return session ? { ...session } : null
+    try {
+      if (!this.apperClient) this.initializeClient()
+      
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "plan_id_c"}},
+          {"field": {"Name": "date_c"}},
+          {"field": {"Name": "duration_c"}},
+          {"field": {"Name": "completed_c"}},
+          {"field": {"Name": "exercises_data_c"}},
+          {"field": {"Name": "user_id_c"}}
+        ]
+      }
+
+      const response = await this.apperClient.getRecordById(this.tableName, id, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return null
+      }
+
+      return response.data || null
+    } catch (error) {
+      console.error(`Error fetching workout session ${id}:`, error?.response?.data?.message || error)
+      return null
+    }
   }
 
   async create(sessionData) {
-    await this.delay()
-    const newSession = {
-      Id: this.getNextId(),
-      ...sessionData
+    try {
+      if (!this.apperClient) this.initializeClient()
+      
+      const params = {
+        records: [{
+          plan_id_c: sessionData.plan_id_c,
+          date_c: sessionData.date_c,
+          duration_c: sessionData.duration_c,
+          completed_c: sessionData.completed_c,
+          exercises_data_c: sessionData.exercises_data_c,
+          user_id_c: sessionData.user_id_c
+        }]
+      }
+
+      const response = await this.apperClient.createRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return null
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success)
+        const failed = response.results.filter(r => !r.success)
+        
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} workout sessions: ${JSON.stringify(failed)}`)
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`))
+            if (record.message) toast.error(record.message)
+          })
+        }
+        
+        if (successful.length > 0) {
+          toast.success("Workout session created successfully")
+          return successful[0].data
+        }
+      }
+      return null
+    } catch (error) {
+      console.error("Error creating workout session:", error?.response?.data?.message || error)
+      toast.error("Failed to create workout session")
+      return null
     }
-    this.sessions.push(newSession)
-    return { ...newSession }
   }
 
   async update(id, sessionData) {
-    await this.delay()
-    const index = this.sessions.findIndex(s => s.Id === id)
-    if (index !== -1) {
-      this.sessions[index] = { ...this.sessions[index], ...sessionData }
-      return { ...this.sessions[index] }
+    try {
+      if (!this.apperClient) this.initializeClient()
+      
+      const params = {
+        records: [{
+          Id: id,
+          plan_id_c: sessionData.plan_id_c,
+          date_c: sessionData.date_c,
+          duration_c: sessionData.duration_c,
+          completed_c: sessionData.completed_c,
+          exercises_data_c: sessionData.exercises_data_c,
+          user_id_c: sessionData.user_id_c
+        }]
+      }
+
+      const response = await this.apperClient.updateRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return null
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success)
+        const failed = response.results.filter(r => !r.success)
+        
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} workout sessions: ${JSON.stringify(failed)}`)
+          failed.forEach(record => {
+            record.errors?.forEach(error => toast.error(`${error.fieldLabel}: ${error}`))
+            if (record.message) toast.error(record.message)
+          })
+        }
+        
+        if (successful.length > 0) {
+          toast.success("Workout session updated successfully")
+          return successful[0].data
+        }
+      }
+      return null
+    } catch (error) {
+      console.error("Error updating workout session:", error?.response?.data?.message || error)
+      toast.error("Failed to update workout session")
+      return null
     }
-    throw new Error("Workout session not found")
   }
 
   async delete(id) {
-    await this.delay()
-    const index = this.sessions.findIndex(s => s.Id === id)
-    if (index !== -1) {
-      const deleted = this.sessions.splice(index, 1)[0]
-      return { ...deleted }
+    try {
+      if (!this.apperClient) this.initializeClient()
+      
+      const params = {
+        RecordIds: [id]
+      }
+
+      const response = await this.apperClient.deleteRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return false
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success)
+        const failed = response.results.filter(r => !r.success)
+        
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} workout sessions: ${JSON.stringify(failed)}`)
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message)
+          })
+        }
+        
+        if (successful.length > 0) {
+          toast.success("Workout session deleted successfully")
+          return true
+        }
+      }
+      return false
+    } catch (error) {
+      console.error("Error deleting workout session:", error?.response?.data?.message || error)
+      toast.error("Failed to delete workout session")
+      return false
     }
-    throw new Error("Workout session not found")
-  }
-
-  getNextId() {
-    return Math.max(...this.sessions.map(s => s.Id), 0) + 1
-  }
-
-  delay(ms = 400) {
-    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }
 

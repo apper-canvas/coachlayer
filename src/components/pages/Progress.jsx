@@ -20,7 +20,7 @@ const Progress = () => {
     try {
       setError("")
       setLoading(true)
-      const data = await workoutSessionService.getAll()
+const data = await workoutSessionService.getAll()
       setSessions(data)
       calculateStats(data)
     } catch (err) {
@@ -31,13 +31,13 @@ const Progress = () => {
   }
 
   const calculateStats = (sessions) => {
-    const completedSessions = sessions.filter(session => session.completed)
+const completedSessions = sessions.filter(session => session.completed_c || session.completed)
     const totalWorkouts = completedSessions.length
-    const totalMinutes = completedSessions.reduce((total, session) => total + session.duration, 0)
+    const totalMinutes = completedSessions.reduce((total, session) => total + (session.duration_c || session.duration), 0)
     
     // Weekly goal progress (target: 4 workouts per week)
-    const thisWeek = completedSessions.filter(session => {
-      const sessionDate = new Date(session.date)
+const thisWeek = completedSessions.filter(session => {
+      const sessionDate = new Date(session.date_c || session.date)
       const weekAgo = new Date()
       weekAgo.setDate(weekAgo.getDate() - 7)
       return sessionDate >= weekAgo
@@ -50,14 +50,14 @@ const Progress = () => {
     
     // Monthly comparison
     const thisMonth = completedSessions.filter(session => {
-      const sessionDate = new Date(session.date)
+const sessionDate = new Date(session.date_c || session.date)
       const monthAgo = new Date()
       monthAgo.setMonth(monthAgo.getMonth() - 1)
       return sessionDate >= monthAgo
     })
     
     const lastMonth = completedSessions.filter(session => {
-      const sessionDate = new Date(session.date)
+const sessionDate = new Date(session.date_c || session.date)
       const twoMonthsAgo = new Date()
       twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
       const oneMonthAgo = new Date()
@@ -83,8 +83,8 @@ const Progress = () => {
 
   const calculateStreak = (sessions) => {
     const completedSessions = sessions
-      .filter(session => session.completed)
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
+.filter(session => session.completed_c || session.completed)
+      .sort((a, b) => new Date(b.date_c || b.date) - new Date(a.date_c || a.date))
     
     if (completedSessions.length === 0) return 0
     
@@ -93,7 +93,7 @@ const Progress = () => {
     today.setHours(0, 0, 0, 0)
     
     for (let session of completedSessions) {
-      const sessionDate = new Date(session.date)
+const sessionDate = new Date(session.date_c || session.date)
       sessionDate.setHours(0, 0, 0, 0)
       
       const daysDiff = Math.floor((today - sessionDate) / (1000 * 60 * 60 * 24))
@@ -115,8 +115,8 @@ const Progress = () => {
       date.setDate(date.getDate() - i)
       const dateStr = date.toISOString().split("T")[0]
       
-      const dayWorkouts = sessions.filter(session => {
-        const sessionDate = new Date(session.date).toISOString().split("T")[0]
+const dayWorkouts = sessions.filter(session => {
+        const sessionDate = new Date(session.date_c || session.date).toISOString().split("T")[0]
         return sessionDate === dateStr
       }).length
       

@@ -25,7 +25,7 @@ const Profile = () => {
       setLoading(true)
       
       const [userData, sessionsData] = await Promise.all([
-        userService.getById(1), // Assume user ID 1 for demo
+userService.getCurrentUser(),
         workoutSessionService.getAll()
       ])
       
@@ -92,8 +92,10 @@ const Profile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const updatedUser = await userService.update(user.Id, editForm)
-      setUser(updatedUser)
+const updatedUser = await userService.update(user.Id, editForm)
+      if (updatedUser) {
+        setUser(updatedUser)
+      }
       setIsEditing(false)
       toast.success("Profile updated successfully!")
     } catch (err) {
@@ -135,8 +137,8 @@ const Profile = () => {
           {isEditing ? (
             <div className="space-y-3">
               <Input
-                value={editForm.name || ""}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+value={editForm.name_c || editForm.name || ""}
+                onChange={(e) => handleInputChange("name_c", e.target.value)}
                 placeholder="Your Name"
                 className="text-center"
               />
@@ -144,14 +146,14 @@ const Profile = () => {
           ) : (
             <div>
               <h2 className="text-2xl font-display font-bold text-gray-900 mb-2">
-                {user.name}
+{user.name_c || user.name}
               </h2>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <Badge variant={getFitnessLevelColor(user.fitnessLevel)}>
-                  {user.fitnessLevel}
+<Badge variant={getFitnessLevelColor(user.fitness_level_c || user.fitnessLevel)}>
+                  {user.fitness_level_c || user.fitnessLevel}
                 </Badge>
-                <div className="text-sm text-gray-600">
-                  Member since {new Date(user.joinDate).toLocaleDateString()}
+<div className="text-sm text-gray-600">
+                  Member since {new Date(user.join_date_c || user.joinDate).toLocaleDateString()}
                 </div>
               </div>
             </div>
@@ -194,15 +196,15 @@ const Profile = () => {
           {isEditing ? (
             <div className="space-y-3">
               <Input
-                value={editForm.goals?.join(", ") || ""}
-                onChange={(e) => handleInputChange("goals", e.target.value.split(", ").filter(g => g))}
+value={(editForm.goals_c || editForm.goals || []).join(", ")}
+                onChange={(e) => handleInputChange("goals_c", e.target.value.split(", ").filter(g => g))}
                 placeholder="Enter your fitness goals (comma separated)"
               />
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {user.goals?.length > 0 ? (
-                user.goals.map((goal, index) => (
+{(user.goals_c || user.goals || [])?.length > 0 ? (
+                (user.goals_c || user.goals || []).map((goal, index) => (
                   <Badge key={index} variant="secondary">
                     {goal}
                   </Badge>
@@ -256,7 +258,7 @@ const Profile = () => {
       <div className="grid grid-cols-2 gap-4">
         <StatCard
           title="Fitness Level"
-          value={user.fitnessLevel}
+value={user.fitness_level_c || user.fitnessLevel}
           icon="TrendingUp"
           gradient="from-primary/10 to-orange-100"
         />

@@ -1,32 +1,40 @@
-import { Outlet } from "react-router-dom"
-import TabNavigation from "@/components/molecules/TabNavigation"
-import ApperIcon from "@/components/ApperIcon"
+import { Outlet } from "react-router-dom";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
+import { AuthContext } from "@/App";
+import ApperIcon from "@/components/ApperIcon";
+import TabNavigation from "@/components/molecules/TabNavigation";
+import Button from "@/components/atoms/Button";
 
 const Layout = () => {
-  const tabs = [
-    { path: "/workouts", label: "Workouts", icon: "Dumbbell" },
-    { path: "/exercises", label: "Library", icon: "BookOpen" },
-    { path: "/progress", label: "Progress", icon: "TrendingUp" },
-    { path: "/profile", label: "Profile", icon: "User" }
-  ]
+  const { logout } = useContext(AuthContext)
+  const { user } = useSelector((state) => state.user)
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="flex flex-col h-screen">
       {/* Header */}
-      <header className="bg-gradient-to-r from-secondary to-blue-700 text-white p-4 shadow-lg">
-        <div className="flex items-center justify-between max-w-md mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center">
-              <ApperIcon name="Zap" className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-display font-bold">Coach Pro</h1>
-              <p className="text-sm text-blue-200">Ready to train?</p>
-            </div>
+      <header className="flex items-center justify-between p-4 bg-surface shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center">
+            <span className="text-white font-display font-bold text-sm">C</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-yellow-400 flex items-center justify-center">
-            <ApperIcon name="User" className="w-4 h-4 text-gray-800" />
-          </div>
+          <h1 className="text-xl font-display font-bold text-gray-900">Coach Pro</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          {user && (
+            <span className="text-sm font-body text-gray-600">
+              Welcome, {user.firstName || user.name || "User"}
+            </span>
+)}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            className="flex items-center gap-2 text-blue-200 hover:text-white"
+          >
+            <ApperIcon name="LogOut" size={16} />
+            Logout
+          </Button>
         </div>
       </header>
 
@@ -38,7 +46,7 @@ const Layout = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-surface shadow-2xl border-t border-gray-200">
         <div className="max-w-md mx-auto">
-          <TabNavigation tabs={tabs} />
+          <TabNavigation />
         </div>
       </div>
     </div>

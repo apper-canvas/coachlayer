@@ -14,7 +14,7 @@ const Workouts = () => {
   const [error, setError] = useState("")
 
   const loadData = async () => {
-    try {
+try {
       setError("")
       setLoading(true)
       
@@ -27,15 +27,15 @@ const Workouts = () => {
       
       // Calculate stats
       const thisWeekSessions = sessionsData.filter(session => {
-        const sessionDate = new Date(session.date)
+        const sessionDate = new Date(session.date_c || session.date)
         const weekAgo = new Date()
         weekAgo.setDate(weekAgo.getDate() - 7)
-        return sessionDate >= weekAgo && session.completed
+        return sessionDate >= weekAgo && (session.completed_c || session.completed)
       })
       
       const totalMinutes = sessionsData
-        .filter(session => session.completed)
-        .reduce((total, session) => total + session.duration, 0)
+        .filter(session => session.completed_c || session.completed)
+        .reduce((total, session) => total + (session.duration_c || session.duration), 0)
       
       const currentStreak = calculateStreak(sessionsData)
       
@@ -43,7 +43,7 @@ const Workouts = () => {
         weeklyWorkouts: thisWeekSessions.length,
         totalMinutes,
         currentStreak,
-        totalWorkouts: sessionsData.filter(session => session.completed).length
+        totalWorkouts: sessionsData.filter(session => session.completed_c || session.completed).length
       })
     } catch (err) {
       setError(err.message || "Failed to load workout data")
@@ -52,10 +52,10 @@ const Workouts = () => {
     }
   }
 
-  const calculateStreak = (sessions) => {
+const calculateStreak = (sessions) => {
     const completedSessions = sessions
-      .filter(session => session.completed)
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .filter(session => session.completed_c || session.completed)
+      .sort((a, b) => new Date(b.date_c || b.date) - new Date(a.date_c || a.date))
     
     if (completedSessions.length === 0) return 0
     
@@ -64,7 +64,7 @@ const Workouts = () => {
     today.setHours(0, 0, 0, 0)
     
     for (let session of completedSessions) {
-      const sessionDate = new Date(session.date)
+      const sessionDate = new Date(session.date_c || session.date)
       sessionDate.setHours(0, 0, 0, 0)
       
       const daysDiff = Math.floor((today - sessionDate) / (1000 * 60 * 60 * 24))

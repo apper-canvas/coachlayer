@@ -25,7 +25,7 @@ const WorkoutSession = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  const loadWorkoutData = async () => {
+const loadWorkoutData = async () => {
     try {
       setError("")
       setLoading(true)
@@ -38,7 +38,8 @@ const WorkoutSession = () => {
       setPlan(planData)
       
       // Load exercise details
-      const exercisePromises = planData.exercises.map(exerciseId => 
+      const exerciseIds = (planData.exercises_c || planData.exercises || "").toString().split(",").map(id => parseInt(id.trim())).filter(id => !isNaN(id))
+      const exercisePromises = exerciseIds.map(exerciseId => 
         exerciseService.getById(exerciseId)
       )
       const exerciseDetails = await Promise.all(exercisePromises)
@@ -88,20 +89,21 @@ const WorkoutSession = () => {
     }
   }
 
-  const completeWorkout = async () => {
+const completeWorkout = async () => {
     try {
       const sessionDuration = Math.floor((new Date() - sessionStartTime) / 1000 / 60)
       
       const sessionData = {
-        planId: parseInt(planId),
-        date: new Date().toISOString(),
-        exercises: exercises.map(exercise => ({
+        plan_id_c: parseInt(planId),
+        date_c: new Date().toISOString(),
+        exercises_data_c: JSON.stringify(exercises.map(exercise => ({
           id: exercise.Id,
-          name: exercise.name,
+          name: exercise.name_c || exercise.name,
           ...exerciseData[exercise.Id]
-        })),
-        duration: sessionDuration,
-        completed: true
+        }))),
+        duration_c: sessionDuration,
+        completed_c: true,
+        user_id_c: 1 // TODO: Use actual authenticated user ID
       }
       
       await workoutSessionService.create(sessionData)
@@ -139,7 +141,7 @@ const WorkoutSession = () => {
         <CardHeader className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg mb-1">{plan.name}</CardTitle>
+<CardTitle className="text-lg mb-1">{plan.name_c || plan.name}</CardTitle>
               <p className="text-sm text-gray-600 mb-2">Exercise {currentExerciseIndex + 1} of {exercises.length}</p>
               
               {/* Progress Bar */}
@@ -167,11 +169,11 @@ const WorkoutSession = () => {
               <ApperIcon name="Target" className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-display font-bold">{currentExercise.name}</h3>
+<h3 className="text-xl font-display font-bold">{currentExercise.name_c || currentExercise.name}</h3>
               <div className="flex flex-wrap gap-1 mt-1">
-                {currentExercise.muscleGroups.map((muscle) => (
+                {(currentExercise.muscle_groups_c?.split(",") || currentExercise.muscleGroups || []).map((muscle) => (
                   <Badge key={muscle} variant="secondary" className="text-xs">
-                    {muscle}
+                    {muscle.trim()}
                   </Badge>
                 ))}
               </div>
@@ -183,7 +185,7 @@ const WorkoutSession = () => {
             {/* Exercise Instructions */}
             <div className="p-4 bg-white/50 rounded-xl">
               <p className="text-sm text-gray-700 leading-relaxed">
-                {currentExercise.instructions}
+{currentExercise.instructions_c || currentExercise.instructions}
               </p>
             </div>
             

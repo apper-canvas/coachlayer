@@ -28,7 +28,7 @@ const ExerciseCard = ({ exercise, onClick, className, ...props }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-blue-100/30 opacity-50" />
       <CardHeader className="relative z-10 pb-3">
         <div className="flex items-start justify-between">
-          <CardTitle className="text-base leading-tight flex-1">{exercise.name}</CardTitle>
+<CardTitle className="text-base leading-tight flex-1">{exercise.name_c || exercise.name}</CardTitle>
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-secondary to-blue-600 flex items-center justify-center ml-2">
             <ApperIcon name="Target" className="w-5 h-5 text-white" />
           </div>
@@ -37,14 +37,14 @@ const ExerciseCard = ({ exercise, onClick, className, ...props }) => {
       <CardContent className="relative z-10 pt-0">
         <div className="space-y-3">
           <div className="flex flex-wrap gap-1">
-            {exercise.muscleGroups.slice(0, 2).map((muscle) => (
-              <Badge key={muscle} variant={getMuscleGroupColor(muscle)} className="text-xs">
-                {muscle}
+{(exercise.muscle_groups_c?.split(",") || exercise.muscleGroups || []).slice(0, 2).map((muscle) => (
+              <Badge key={muscle} variant={getMuscleGroupColor(muscle.trim())} className="text-xs">
+                {muscle.trim()}
               </Badge>
             ))}
-            {exercise.muscleGroups.length > 2 && (
+{(exercise.muscle_groups_c?.split(",") || exercise.muscleGroups || []).length > 2 && (
               <Badge variant="default" className="text-xs">
-                +{exercise.muscleGroups.length - 2}
+                +{(exercise.muscle_groups_c?.split(",") || exercise.muscleGroups || []).length - 2}
               </Badge>
             )}
           </div>

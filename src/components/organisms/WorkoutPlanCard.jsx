@@ -27,19 +27,19 @@ const WorkoutPlanCard = ({ plan, className, ...props }) => {
       <CardHeader className="relative z-10">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg mb-2">{plan.name}</CardTitle>
-            <p className="text-sm text-gray-600 mb-3">{plan.description}</p>
+<CardTitle className="text-lg mb-2">{plan.name_c || plan.name}</CardTitle>
+            <p className="text-sm text-gray-600 mb-3">{plan.description_c || plan.description}</p>
             <div className="flex items-center gap-2 mb-3">
-              <Badge variant={getDifficultyColor(plan.difficulty)}>
-                {plan.difficulty}
+              <Badge variant={getDifficultyColor(plan.difficulty_c || plan.difficulty)}>
+                {plan.difficulty_c || plan.difficulty}
               </Badge>
               <div className="flex items-center gap-1 text-xs text-gray-600">
                 <ApperIcon name="Clock" size={14} />
-                {plan.duration} min
+                {plan.duration_c || plan.duration} min
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-600">
                 <ApperIcon name="Target" size={14} />
-                {plan.exercises.length} exercises
+                {plan.exercises_c?.split(",").length || plan.exercises?.length || 0} exercises
               </div>
             </div>
           </div>

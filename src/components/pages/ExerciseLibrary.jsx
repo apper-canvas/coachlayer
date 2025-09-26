@@ -48,30 +48,37 @@ const ExerciseLibrary = () => {
     let filtered = exercises
 
     // Apply muscle group filter
-    if (activeFilter !== "All") {
-      filtered = filtered.filter(exercise => 
-        exercise.muscleGroups.includes(activeFilter)
-      )
+if (activeFilter !== "All") {
+      filtered = filtered.filter(exercise => {
+        const muscleGroups = exercise.muscle_groups_c?.split(",").map(m => m.trim()) || exercise.muscleGroups || []
+        return muscleGroups.includes(activeFilter)
+      })
     }
 
     // Apply search filter
     if (searchTerm) {
-      filtered = filtered.filter(exercise =>
-        exercise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        exercise.muscleGroups.some(muscle => 
-          muscle.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        exercise.equipment.some(equip => 
-          equip.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      )
+      filtered = filtered.filter(exercise => {
+        const name = exercise.name_c || exercise.name || ""
+        const muscleGroups = exercise.muscle_groups_c?.split(",").map(m => m.trim()) || exercise.muscleGroups || []
+        const equipment = exercise.equipment_c?.split(",").map(e => e.trim()) || exercise.equipment || []
+        
+        return name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               muscleGroups.some(muscle => 
+                 muscle.toLowerCase().includes(searchTerm.toLowerCase())
+               ) ||
+               equipment.some(equip => 
+                 equip.toLowerCase().includes(searchTerm.toLowerCase())
+               )
+      })
     }
 
     setFilteredExercises(filtered)
   }, [exercises, activeFilter, searchTerm])
 
-  const handleExerciseClick = (exercise) => {
-    toast.info(`${exercise.name} - ${exercise.muscleGroups.join(", ")}`)
+const handleExerciseClick = (exercise) => {
+    const name = exercise.name_c || exercise.name || "Exercise"
+    const muscleGroups = exercise.muscle_groups_c?.split(",").map(m => m.trim()) || exercise.muscleGroups || []
+    toast.info(`${name} - ${muscleGroups.join(", ")}`)
   }
 
   if (loading) return <Loading />
