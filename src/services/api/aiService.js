@@ -140,7 +140,7 @@ class AIService {
   // Helper method to parse form tips from AI response
   parseFormTips(content) {
     // Split content into individual tips, handling various formats
-    return content.split(/\n|•|\d\.|\-/).filter(tip => 
+return content.split(/\n|•|\d\.|-/).filter(tip =>
       tip.trim().length > 10 && !tip.includes('Tips:') && !tip.includes('Form:')
     ).map(tip => tip.trim()).slice(0, 5)
   }
