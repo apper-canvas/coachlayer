@@ -11,7 +11,70 @@ import ApperIcon from "@/components/ApperIcon"
 import { workoutPlanService } from "@/services/api/workoutPlanService"
 import { workoutSessionService } from "@/services/api/workoutSessionService"
 import { exerciseService } from "@/services/api/exerciseService"
+import { aiService } from "@/services/api/aiService"
 import { toast } from "react-toastify"
+
+// AI Form Tips Component
+const AIFormTips = ({ exercise }) => {
+  const [tips, setTips] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const loadFormTips = async () => {
+    setLoading(true)
+    try {
+      const result = await aiService.getFormGuidance(exercise)
+      if (result.success) {
+        setTips(result.tips)
+      } else {
+        setTips(result.fallbackTips || [])
+      }
+    } catch (error) {
+      console.error('Failed to load AI form tips:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (exercise) {
+      loadFormTips()
+    }
+  }, [exercise.Id])
+
+  if (loading) {
+    return (
+      <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+        <div className="flex items-center gap-2 mb-3">
+          <ApperIcon name="Bot" className="w-5 h-5 text-blue-600 animate-pulse" />
+          <span className="text-sm font-medium text-blue-800">AI Coach Loading...</span>
+        </div>
+        <div className="animate-pulse space-y-2">
+          <div className="h-3 bg-blue-200 rounded w-full"></div>
+          <div className="h-3 bg-blue-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (tips.length === 0) return null
+
+  return (
+    <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+      <div className="flex items-center gap-2 mb-3">
+        <ApperIcon name="Bot" className="w-5 h-5 text-blue-600" />
+        <span className="text-sm font-medium text-blue-800">AI Form Tips</span>
+      </div>
+      <ul className="space-y-2">
+        {tips.map((tip, index) => (
+          <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
+            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0 mt-2"></span>
+            {tip}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 const WorkoutSession = () => {
   const { planId } = useParams()
@@ -184,11 +247,13 @@ const completeWorkout = async () => {
           <div className="space-y-4">
             {/* Exercise Instructions */}
             <div className="p-4 bg-white/50 rounded-xl">
-              <p className="text-sm text-gray-700 leading-relaxed">
+<p className="text-sm text-gray-700 leading-relaxed">
 {currentExercise.instructions_c || currentExercise.instructions}
               </p>
+              
+              {/* AI Form Tips */}
+              <AIFormTips exercise={currentExercise} />
             </div>
-            
             {/* Exercise Inputs */}
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-2">

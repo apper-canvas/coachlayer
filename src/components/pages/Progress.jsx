@@ -1,21 +1,25 @@
-import { useState, useEffect } from "react"
-import StatCard from "@/components/molecules/StatCard"
-import ProgressRing from "@/components/molecules/ProgressRing"
-import ProgressChart from "@/components/organisms/ProgressChart"
-import Badge from "@/components/atoms/Badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import ApperIcon from "@/components/ApperIcon"
-import { workoutSessionService } from "@/services/api/workoutSessionService"
-
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card";
+import { workoutSessionService } from "@/services/api/workoutSessionService";
+import { aiService } from "@/services/api/aiService";
+import { toast } from "@/utils/toast";
+import ApperIcon from "@/components/ApperIcon";
+import StatCard from "@/components/molecules/StatCard";
+import ProgressRing from "@/components/molecules/ProgressRing";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import ProgressChart from "@/components/organisms/ProgressChart";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
 const Progress = () => {
   const [sessions, setSessions] = useState([])
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-
+  const [aiInsights, setAiInsights] = useState("")
+  const [aiLoading, setAiLoading] = useState(false)
+  const [showAiInsights, setShowAiInsights] = useState(false)
   const loadProgressData = async () => {
     try {
       setError("")
@@ -259,10 +263,75 @@ const dayWorkouts = sessions.filter(session => {
               </div>
             ))}
           </div>
+</CardContent>
+      </Card>
+
+      {/* AI Insights Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ApperIcon name="Bot" className="text-blue-600" />
+            AI Coach Insights
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadAiInsights}
+              disabled={aiLoading}
+              className="ml-auto"
+            >
+              {aiLoading ? (
+                <>
+                  <ApperIcon name="Loader2" className="w-4 h-4 mr-2 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <ApperIcon name="Sparkles" className="w-4 h-4 mr-2" />
+                  Get Insights
+                </>
+              )}
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {aiInsights ? (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+              <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                {aiInsights}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <ApperIcon name="MessageCircle" className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+              <p>Get personalized insights and recommendations from your AI fitness coach based on your workout progress.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   )
+
+  // Load AI insights function
+async function loadAiInsights() {
+    if (!stats) return
+    
+    setAiLoading(true)
+    try {
+      const result = await aiService.getProgressInsights(stats)
+      if (result?.success) {
+        setAiInsights(result.insights)
+        setShowAiInsights(true)
+        toast.success("AI insights generated!")
+      } else {
+        toast.error("Failed to get AI insights")
+      }
+    } catch (error) {
+      console.error('Failed to load AI insights:', error)
+      toast.error("AI insights unavailable")
+    } finally {
+      setAiLoading(false)
+    }
+  }
 }
 
 export default Progress
